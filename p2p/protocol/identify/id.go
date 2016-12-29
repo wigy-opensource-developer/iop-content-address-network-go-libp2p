@@ -2,7 +2,7 @@ package identify
 
 import (
 	"context"
-	"strings"
+	"path"
 	"sync"
 
 	pb "github.com/libp2p/go-libp2p/p2p/protocol/identify/pb"
@@ -29,7 +29,7 @@ const ID = "/ipfs/id/1.0.0"
 
 // LibP2PVersion holds the current protocol version for a client running this code
 // TODO(jbenet): fix the versioning mess.
-const LibP2PVersion = "ipfs/0.1.0"
+const LibP2PVersion = "iop-can/0.1.0"
 
 var ClientVersion = "go-libp2p/3.3.4"
 
@@ -412,19 +412,27 @@ func addrInAddrs(a ma.Multiaddr, as []ma.Multiaddr) bool {
 // we're in tight development, we will return false for minor version
 // changes too.
 func protocolVersionsAreCompatible(v1, v2 string) bool {
-	if strings.HasPrefix(v1, "ipfs/") {
-		v1 = v1[5:]
-	}
-	if strings.HasPrefix(v2, "ipfs/") {
-		v2 = v2[5:]
+	name1, ver1 := path.Split(v1)
+	name2, ver2 := path.Split(v2)
+
+	if name1 == "" {
+		name1 = "ipfs/"
 	}
 
-	v1s, err := semver.NewVersion(v1)
+	if name2 == "" {
+		name2 = "ipfs/"
+	}
+
+	if name1 != name2 {
+		return false
+	}
+
+	v1s, err := semver.NewVersion(ver1)
 	if err != nil {
 		return false
 	}
 
-	v2s, err := semver.NewVersion(v2)
+	v2s, err := semver.NewVersion(ver2)
 	if err != nil {
 		return false
 	}

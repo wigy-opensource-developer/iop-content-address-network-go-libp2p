@@ -21,7 +21,7 @@ import (
 
 var log = logging.Logger("mdns")
 
-const ServiceTag = "_ipfs-discovery._udp"
+const ServiceTag = "_iop-can-discovery._udp"
 
 type Service interface {
 	io.Closer
@@ -67,7 +67,7 @@ func NewMdnsService(ctx context.Context, peerhost host.Host, interval time.Durat
 	golog.SetOutput(ioutil.Discard)
 
 	var ipaddrs []net.IP
-	port := 4001
+	port := 14001
 
 	addrs, err := getDialableListenAddrs(peerhost)
 	if err != nil {
